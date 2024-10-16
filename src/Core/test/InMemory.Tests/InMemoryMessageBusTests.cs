@@ -9,15 +9,16 @@ public class InMemoryMessageBusTests
     public async Task CreateTestMessage_WhenSend_ConsumerWasCalled()
     {
         // Arrange
-        var host = await InMemoryBusHost<TestConsumer, TestMessage>.Create();
+        var host = await InMemoryBusHost.Create((q, b) => b.AddConsumer<TestConsumer, TestMessage>(q));
         var testMessage = new TestMessage();
+        var inMemoryMessageBus = host.GetMessageBus<IInMemoryMessageBus>();
 
         // Act
-        await host.MessageBus.Send(testMessage, host.QueueName, default);
-        await host.WaitForConsumer(host.QueueName);
+        await inMemoryMessageBus.Send(testMessage, host.QueueName, default);
+        await inMemoryMessageBus.WaitForConsumer(host.QueueName);
 
         // Assert
-        host.Consumer.WasCalled.Should().BeTrue();
+        host.GetConsumer<TestConsumer, TestMessage>().WasCalled.Should().BeTrue();
     }
     
     [Fact]
@@ -25,16 +26,17 @@ public class InMemoryMessageBusTests
     {
         // Arrange
         var testMessage = new TestMessage();
-        var host = await InMemoryBusHost<TestConsumer, TestMessage>.Create();
+        var host = await InMemoryBusHost.Create((q, b) => b.AddConsumer<TestConsumer, TestMessage>(q));
         var now = host.TimeProvider.GetUtcNow();
+        var inMemoryMessageBus = host.GetMessageBus<IInMemoryMessageBus>();
 
         // Act
-        await host.MessageBus.Schedule(testMessage, host.QueueName, now.AddHours(1), default);
+        await inMemoryMessageBus.Schedule(testMessage, host.QueueName, now.AddHours(1), default);
         
         // Assert
-        var queue = host.MessageBus.GetQueue(host.QueueName);
+        var queue = inMemoryMessageBus.GetQueue(host.QueueName);
         queue.GetItems().Should().ContainSingle(i => i.EnqueueTime == now.AddHours(1));
-        host.Consumer.WasCalled.Should().BeFalse();
+        host.GetConsumer<TestConsumer, TestMessage>().WasCalled.Should().BeFalse();
     }
     
     [Fact]
@@ -42,16 +44,17 @@ public class InMemoryMessageBusTests
     {
         // Arrange
         var testMessage = new TestMessage();
-        var host = await InMemoryBusHost<TestConsumer, TestMessage>.Create();
+        var host = await InMemoryBusHost.Create((q, b) => b.AddConsumer<TestConsumer, TestMessage>(q));
         var now = host.TimeProvider.GetUtcNow();
+        var inMemoryMessageBus = host.GetMessageBus<IInMemoryMessageBus>();
 
         // Act
-        await host.MessageBus.Schedule(testMessage, host.QueueName, now.AddHours(1), default);
+        await inMemoryMessageBus.Schedule(testMessage, host.QueueName, now.AddHours(1), default);
         host.TimeProvider.Advance(TimeSpan.FromHours(2));
-        await host.WaitForConsumer(host.QueueName);
+        await inMemoryMessageBus.WaitForConsumer(host.QueueName);
         
         // Assert
-        host.Consumer.WasCalled.Should().BeTrue();
+        host.GetConsumer<TestConsumer, TestMessage>().WasCalled.Should().BeTrue();
     }
 
     private record TestMessage;

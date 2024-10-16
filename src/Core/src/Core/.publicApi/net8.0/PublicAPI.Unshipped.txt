@@ -1,1 +1,42 @@
 ﻿#nullable enable
+Bridge.OutboxItem
+Bridge.OutboxItem.ActivityId.get -> string?
+Bridge.OutboxItem.ActivityId.init -> void
+Bridge.OutboxItem.CreatedAt.get -> System.DateTime
+Bridge.OutboxItem.CreatedAt.init -> void
+Bridge.OutboxItem.Deconstruct(out string! Id, out string! MessageType, out string! Queue, out System.ReadOnlyMemory<byte> Message, out System.DateTime CreatedAt, out string? ActivityId) -> void
+Bridge.OutboxItem.Id.get -> string!
+Bridge.OutboxItem.Id.init -> void
+Bridge.OutboxItem.Message.get -> System.ReadOnlyMemory<byte>
+Bridge.OutboxItem.Message.init -> void
+Bridge.OutboxItem.MessageType.get -> string!
+Bridge.OutboxItem.MessageType.init -> void
+Bridge.OutboxItem.OutboxItem(Bridge.OutboxItem! original) -> void
+Bridge.OutboxItem.OutboxItem(string! Id, string! MessageType, string! Queue, System.ReadOnlyMemory<byte> Message, System.DateTime CreatedAt, string? ActivityId) -> void
+Bridge.OutboxItem.Queue.get -> string!
+Bridge.OutboxItem.Queue.init -> void
+Bridge.SentOutboxItem
+Bridge.SentOutboxItem.Deconstruct(out string! Id, out string! MessageType, out string! Queue, out System.ReadOnlyMemory<byte> Message, out System.DateTime CreatedAt, out System.DateTime SentAt, out string? ActivityId) -> void
+Bridge.SentOutboxItem.SentAt.get -> System.DateTime
+Bridge.SentOutboxItem.SentAt.init -> void
+Bridge.SentOutboxItem.SentOutboxItem(Bridge.SentOutboxItem! original) -> void
+Bridge.SentOutboxItem.SentOutboxItem(string! Id, string! MessageType, string! Queue, System.ReadOnlyMemory<byte> Message, System.DateTime CreatedAt, System.DateTime SentAt, string? ActivityId) -> void
+override Bridge.OutboxItem.Equals(object? obj) -> bool
+override Bridge.OutboxItem.GetHashCode() -> int
+override Bridge.OutboxItem.ToString() -> string!
+override Bridge.SentOutboxItem.<Clone>$() -> Bridge.SentOutboxItem!
+override Bridge.SentOutboxItem.EqualityContract.get -> System.Type!
+override Bridge.SentOutboxItem.Equals(object? obj) -> bool
+override Bridge.SentOutboxItem.GetHashCode() -> int
+override Bridge.SentOutboxItem.PrintMembers(System.Text.StringBuilder! builder) -> bool
+override Bridge.SentOutboxItem.ToString() -> string!
+override sealed Bridge.SentOutboxItem.Equals(Bridge.OutboxItem? other) -> bool
+static Bridge.OutboxItem.operator !=(Bridge.OutboxItem? left, Bridge.OutboxItem? right) -> bool
+static Bridge.OutboxItem.operator ==(Bridge.OutboxItem? left, Bridge.OutboxItem? right) -> bool
+static Bridge.SentOutboxItem.operator !=(Bridge.SentOutboxItem? left, Bridge.SentOutboxItem? right) -> bool
+static Bridge.SentOutboxItem.operator ==(Bridge.SentOutboxItem? left, Bridge.SentOutboxItem? right) -> bool
+virtual Bridge.OutboxItem.<Clone>$() -> Bridge.OutboxItem!
+virtual Bridge.OutboxItem.EqualityContract.get -> System.Type!
+virtual Bridge.OutboxItem.Equals(Bridge.OutboxItem? other) -> bool
+virtual Bridge.OutboxItem.PrintMembers(System.Text.StringBuilder! builder) -> bool
+virtual Bridge.SentOutboxItem.Equals(Bridge.SentOutboxItem? other) -> bool

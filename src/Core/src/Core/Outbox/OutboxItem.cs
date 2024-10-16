@@ -1,6 +1,6 @@
 namespace Bridge;
 
-internal record OutboxItem(
+public record OutboxItem(
     string Id,
     string MessageType,
     string Queue,
@@ -8,7 +8,7 @@ internal record OutboxItem(
     DateTime CreatedAt,
     string? ActivityId);
 
-internal record SentOutboxItem(
+public record SentOutboxItem(
     string Id,
     string MessageType,
     string Queue,

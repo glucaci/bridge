@@ -3,12 +3,13 @@ using Azure.Messaging.ServiceBus;
 using Bridge;
 using Bridge.Bus.AzureServiceBus;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static partial class ServiceCollectionExtensions
 {
-    public static BusBridgeBuilder UsingAzureServiceBus(
+    public static void UsingAzureServiceBus(
         this BusBridgeBuilder builder,
         Action<AzureServiceBusOptions>? configureOptions = default,
         Action<ServiceBusClientOptions>? configureClient = default)
@@ -66,9 +67,9 @@ public static partial class ServiceCollectionExtensions
             }
         });
 
-        builder.Services.AddSingleton<IMessageBus, AzureServiceBusSender>();
-
-        return builder;
+        builder.Services.AddSingleton<IBrokerMessageBus, AzureServiceBusSender>();
+        builder.Services.TryAddSingleton<IMessageBus>(sp => 
+            sp.GetRequiredService<IBrokerMessageBus>());
     }
 
     private static void ConfigureServiceBusClientOptions(

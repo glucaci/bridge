@@ -4,18 +4,18 @@ namespace Bridge.InMemory;
 
 internal class InMemoryOutboxStorage : IOutboxStorage
 {
-    private readonly ConcurrentQueue<OutboxItem> _pendingItems = new();
-    private readonly ConcurrentDictionary<string, OutboxItem> _archivedItems = new();
+    internal readonly ConcurrentQueue<OutboxItem> PendingItems = new();
+    internal readonly ConcurrentDictionary<string, OutboxItem> ArchivedItems = new();
     
     public ValueTask Add(OutboxItem outboxItem, CancellationToken cancellationToken)
     {
-        _pendingItems.Enqueue(outboxItem);
+        PendingItems.Enqueue(outboxItem);
         return ValueTask.CompletedTask;
     }
     
     public ValueTask<OutboxItem?> Delete(CancellationToken cancellationToken)
     {
-        if (_pendingItems.TryDequeue(out var outboxItem))
+        if (PendingItems.TryDequeue(out var outboxItem))
         {
             return ValueTask.FromResult<OutboxItem?>(outboxItem);
         }
@@ -25,7 +25,7 @@ internal class InMemoryOutboxStorage : IOutboxStorage
 
     public ValueTask Archive(OutboxItem outboxItem, CancellationToken cancellationToken)
     {
-        _archivedItems[outboxItem.Id] = outboxItem;
+        ArchivedItems[outboxItem.Id] = outboxItem;
         return ValueTask.CompletedTask;
     }
 }

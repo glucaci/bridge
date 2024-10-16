@@ -12,7 +12,7 @@ public static class BusBridgeOutboxBuilderExtensions
         {
             throw new ArgumentNullException(nameof(builder));
         }
-
+        
         builder.Services.AddSingleton<IOutboxStorage, InMemoryOutboxStorage>();
 
         return builder;

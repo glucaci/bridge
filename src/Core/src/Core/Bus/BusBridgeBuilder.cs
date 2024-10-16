@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Bridge;
 
@@ -41,7 +42,8 @@ public class BusBridgeBuilder
     
     public BusBridgeBuilder AddOutbox(Action<BusBridgeOutboxBuilder> configure)
     {
-        Services.AddHostedService<OutboxProcessor>();
+        Services.AddHostedService<OutboxService>();
+        Services.AddSingleton<IOutboxProcessor, OutboxProcessor>();
 
         var builder = new BusBridgeOutboxBuilder(Services);
         configure(builder);

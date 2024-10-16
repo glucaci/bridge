@@ -1,5 +1,9 @@
 ﻿namespace Bridge;
 
+internal interface IBrokerMessageBus : IMessageBus
+{
+}
+
 public interface IMessageBus
 {
     ValueTask Send<TMessage>(

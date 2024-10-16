@@ -4,45 +4,48 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace Bridge.InMemory.Tests;
 
-public class InMemoryBusHost<TConsumer, TMessage> 
-    where TConsumer : class, IConsumer<TMessage>
+public class InMemoryBusHost
 {
+    private readonly IServiceProvider _serviceProvider;
+
     private InMemoryBusHost(
+        IServiceProvider serviceProvider,
         FakeTimeProvider timeProvider,
-        IInMemoryMessageBus messageBus,
-        TConsumer consumer,
         string queueName)
     {
+        _serviceProvider = serviceProvider;
         TimeProvider = timeProvider;
-        MessageBus = messageBus;
-        Consumer = consumer;
         QueueName = queueName;
     }
 
     public FakeTimeProvider TimeProvider { get; }
-    internal IInMemoryMessageBus MessageBus { get; }
-    public TConsumer Consumer { get; }
     public string QueueName { get; }
 
-    public Task WaitForConsumer(string queueName)
+    public TMessageBus GetMessageBus<TMessageBus>()
+        where TMessageBus : IMessageBus
     {
-        var queue = MessageBus.GetQueue(queueName);
-        queue.Close();
-
-        return queue.Waiter;
+        return _serviceProvider.GetRequiredService<TMessageBus>();
     }
-
-    public static async Task<InMemoryBusHost<TConsumer, TMessage>> Create()
+    
+    public TConsumer GetConsumer<TConsumer, TMessage>() 
+        where TConsumer : IConsumer<TMessage>
+    {
+        return _serviceProvider.GetRequiredService<TConsumer>();
+    }
+    
+    public static async Task<InMemoryBusHost> Create(
+        Action<string, BusBridgeBuilder> configure)
     {
         string queueName = Guid.NewGuid().ToString("N");
         var timeProvider = new FakeTimeProvider();
 
         var services = new ServiceCollection();
-
-        services
-            .AddBridge()
-            .AddConsumer<TConsumer, TMessage>(queueName)
-            .UsingInMemory(timeProvider);
+        services.AddLogging();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        
+        var bridgeBuilder = services.AddBridge();
+        configure.Invoke(queueName, bridgeBuilder);
+        bridgeBuilder.UsingInMemory();
         
         var serviceProvider = services.BuildServiceProvider();
         
@@ -51,10 +54,7 @@ public class InMemoryBusHost<TConsumer, TMessage>
         {
             await service.StartAsync(default);
         }
-        
-        var messageBus = serviceProvider.GetRequiredService<IInMemoryMessageBus>();
-        var consumer = serviceProvider.GetRequiredService<TConsumer>();
 
-        return new InMemoryBusHost<TConsumer, TMessage>(timeProvider, messageBus, consumer, queueName);
+        return new InMemoryBusHost(serviceProvider, timeProvider, queueName);
     }
 }

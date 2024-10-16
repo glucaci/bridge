@@ -3,7 +3,7 @@ using Azure.Messaging;
 
 namespace Bridge;
 
-internal interface DefaultSerializer : ISerializer
+internal class DefaultSerializer : ISerializer
 {
     public TMessage Convert<TMessage>(CloudEvent cloudEvent)
     {
