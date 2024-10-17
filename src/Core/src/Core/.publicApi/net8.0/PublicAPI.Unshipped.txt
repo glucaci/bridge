@@ -4,7 +4,9 @@ Bridge.OutboxItem.ActivityId.get -> string?
 Bridge.OutboxItem.ActivityId.init -> void
 Bridge.OutboxItem.CreatedAt.get -> System.DateTime
 Bridge.OutboxItem.CreatedAt.init -> void
-Bridge.OutboxItem.Deconstruct(out string! Id, out string! MessageType, out string! Queue, out System.ReadOnlyMemory<byte> Message, out System.DateTime CreatedAt, out string? ActivityId) -> void
+Bridge.OutboxItem.Deconstruct(out string! Id, out string! MessageType, out string! Queue, out System.ReadOnlyMemory<byte> Message, out System.DateTime CreatedAt, out System.DateTimeOffset? EnqueueTime, out string? ActivityId) -> void
+Bridge.OutboxItem.EnqueueTime.get -> System.DateTimeOffset?
+Bridge.OutboxItem.EnqueueTime.init -> void
 Bridge.OutboxItem.Id.get -> string!
 Bridge.OutboxItem.Id.init -> void
 Bridge.OutboxItem.Message.get -> System.ReadOnlyMemory<byte>
@@ -12,15 +14,15 @@ Bridge.OutboxItem.Message.init -> void
 Bridge.OutboxItem.MessageType.get -> string!
 Bridge.OutboxItem.MessageType.init -> void
 Bridge.OutboxItem.OutboxItem(Bridge.OutboxItem! original) -> void
-Bridge.OutboxItem.OutboxItem(string! Id, string! MessageType, string! Queue, System.ReadOnlyMemory<byte> Message, System.DateTime CreatedAt, string? ActivityId) -> void
+Bridge.OutboxItem.OutboxItem(string! Id, string! MessageType, string! Queue, System.ReadOnlyMemory<byte> Message, System.DateTime CreatedAt, System.DateTimeOffset? EnqueueTime, string? ActivityId) -> void
 Bridge.OutboxItem.Queue.get -> string!
 Bridge.OutboxItem.Queue.init -> void
 Bridge.SentOutboxItem
-Bridge.SentOutboxItem.Deconstruct(out string! Id, out string! MessageType, out string! Queue, out System.ReadOnlyMemory<byte> Message, out System.DateTime CreatedAt, out System.DateTime SentAt, out string? ActivityId) -> void
+Bridge.SentOutboxItem.Deconstruct(out string! Id, out string! MessageType, out string! Queue, out System.ReadOnlyMemory<byte> Message, out System.DateTime CreatedAt, out System.DateTime SentAt, out System.DateTimeOffset? EnqueueTime, out string? ActivityId) -> void
 Bridge.SentOutboxItem.SentAt.get -> System.DateTime
 Bridge.SentOutboxItem.SentAt.init -> void
 Bridge.SentOutboxItem.SentOutboxItem(Bridge.SentOutboxItem! original) -> void
-Bridge.SentOutboxItem.SentOutboxItem(string! Id, string! MessageType, string! Queue, System.ReadOnlyMemory<byte> Message, System.DateTime CreatedAt, System.DateTime SentAt, string? ActivityId) -> void
+Bridge.SentOutboxItem.SentOutboxItem(string! Id, string! MessageType, string! Queue, System.ReadOnlyMemory<byte> Message, System.DateTime CreatedAt, System.DateTime SentAt, System.DateTimeOffset? EnqueueTime, string? ActivityId) -> void
 override Bridge.OutboxItem.Equals(object? obj) -> bool
 override Bridge.OutboxItem.GetHashCode() -> int
 override Bridge.OutboxItem.ToString() -> string!

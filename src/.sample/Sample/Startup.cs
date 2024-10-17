@@ -24,10 +24,7 @@ public class Startup
             {
                 o.UsingInMemory();
             })
-            .UsingAzureServiceBus(o =>
-            {
-                o.ConnectionString = options.BusConnectionString;
-            });
+            .UsingInMemory();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -36,6 +33,14 @@ public class Startup
         app.UseEndpoints(builder =>
         {
             builder.MapGet("/", () => DateTimeOffset.Now);
+            builder.MapGet("/send", // GET: Only for demo purpose :)
+                async (IMessageBus messageBus, CancellationToken cancellationToken) =>
+                {
+                    await messageBus.Send(
+                        new DocumentProcessed(Guid.NewGuid().ToString("N")),
+                        "sample-queue",
+                        cancellationToken);
+                });
         });
     }
 }
@@ -43,6 +48,7 @@ public class Startup
 public record BridgeOptions(string BusConnectionString, string QueueName);
 
 public record DocumentCreated(string Id);
+public record DocumentProcessed(string Id);
 
 public class DocumentCreatedHandler : IConsumer<DocumentCreated>
 {

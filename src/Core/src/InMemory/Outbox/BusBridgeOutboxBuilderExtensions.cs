@@ -14,6 +14,8 @@ public static class BusBridgeOutboxBuilderExtensions
         }
         
         builder.Services.AddSingleton<IOutboxStorage, InMemoryOutboxStorage>();
+        builder.Services.AddSingleton<IMessageBus>(sp =>
+            sp.GetRequiredService<IOutboxStorage>());
 
         return builder;
     }

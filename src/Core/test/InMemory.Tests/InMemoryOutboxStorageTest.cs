@@ -59,5 +59,5 @@ public class InMemoryOutboxStorageTest
     }
 
     private OutboxItem OutboxItem => new(
-        "test", nameof(OutboxItem), "test", ReadOnlyMemory<byte>.Empty, DateTime.MinValue, null);
+        "test", nameof(OutboxItem), "test", ReadOnlyMemory<byte>.Empty, DateTime.MinValue, null, null);
 }

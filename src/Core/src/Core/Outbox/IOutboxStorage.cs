@@ -1,6 +1,6 @@
 namespace Bridge;
 
-internal interface IOutboxStorage
+internal interface IOutboxStorage : IMessageBus
 {
     /// <summary>
     /// Add a new outbox item.

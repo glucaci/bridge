@@ -23,17 +23,25 @@ internal class OutboxService : BackgroundService
     {
         await Task.Yield();
 
-        while (!stoppingToken.IsCancellationRequested)
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(10), _timeProvider);
+
+        try
         {
-            try
+            while (await timer.WaitForNextTickAsync(stoppingToken))
             {
-                await _outboxProcessor.Execute(stoppingToken);
-                await Task.Delay(TimeSpan.FromSeconds(10), _timeProvider, stoppingToken);
-            }                
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed executing outbox");
+                try
+                {
+                    await _outboxProcessor.Execute(stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed executing outbox");
+                }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Outbox service stopped");
         }
     }
 }

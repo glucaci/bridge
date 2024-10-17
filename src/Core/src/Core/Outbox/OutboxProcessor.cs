@@ -35,7 +35,8 @@ internal class OutboxProcessor : IOutboxProcessor
                 {
                     activity?.Dispose();
                     processActivity = BridgeBusActivity.StartProcessOutbox(outboxItem);
-
+                    
+                    // TODO: outboxItem.Message should be a serialized CloudEvent
                     await _brokerMessageBus
                         .Send(outboxItem.Message, outboxItem.Queue, cancellationToken);
 
