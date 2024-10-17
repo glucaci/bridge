@@ -14,12 +14,13 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+		<PackageReference Include="CloudNative.CloudEvents.Amqp" />
 		<PackageReference Include="Azure.Messaging.ServiceBus" />
 		<PackageReference Include="Microsoft.Extensions.Azure" />
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\Core\Core.csproj" />
+	  <ProjectReference Include="..\..\..\Core\src\Core\Core.csproj" />
 	</ItemGroup>
 
 </Project>

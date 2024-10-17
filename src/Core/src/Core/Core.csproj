@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<PackageId>Bridge</PackageId>
+		<AssemblyName>Bridge</AssemblyName>
+		<RootNamespace>Bridge</RootNamespace>
+		<Description>Bridge Core.</Description>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Messaging.ServiceBus" />
+		<!-- TODO: Remove Azure dependency and use CloudEvents
+		<PackageReference Include="CloudNative.CloudEvents" />
+		<PackageReference Include="CloudNative.CloudEvents.SystemTextJson" />-->
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+	</ItemGroup>
+
+</Project>

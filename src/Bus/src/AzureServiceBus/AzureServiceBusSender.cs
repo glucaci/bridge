@@ -4,7 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Bridge.Bus.AzureServiceBus;
 
-internal class AzureServiceBusSender : IMessageBus
+internal class AzureServiceBusSender : IBrokerMessageBus
 {
     /// <summary>
     /// https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/servicebus/Azure.Messaging.ServiceBus/samples/Sample11_CloudEvents.md
@@ -49,7 +49,7 @@ internal class AzureServiceBusSender : IMessageBus
 
         CloudEvent cloudEvent = new CloudEvent(
             _client.Identifier, typeof(TMessage).Name, message);
-
+        
         ServiceBusMessage serviceBusMessage =
             new ServiceBusMessage(new BinaryData(cloudEvent))
             {

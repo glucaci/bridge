@@ -10,5 +10,3 @@ Bridge.Bus.AzureServiceBus.AzureServiceBusOptions.ConnectionString.get -> string
 Bridge.Bus.AzureServiceBus.AzureServiceBusOptions.ConnectionString.set -> void
 Bridge.Bus.AzureServiceBus.AzureServiceBusOptions.FullyQualifiedNamespace.get -> string?
 Bridge.Bus.AzureServiceBus.AzureServiceBusOptions.FullyQualifiedNamespace.set -> void
-Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions
-static Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.UsingAzureServiceBus(this Bridge.Bus.BusBridgeBuilder! builder, System.Action<Bridge.Bus.AzureServiceBus.AzureServiceBusOptions!>? configureOptions = null, System.Action<Azure.Messaging.ServiceBus.ServiceBusClientOptions!>? configureClient = null) -> Bridge.Bus.BusBridgeBuilder!

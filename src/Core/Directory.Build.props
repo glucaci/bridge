@@ -1,0 +1,9 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))" />
+
+  <PropertyGroup>
+    <Product>$(Product) Bus</Product>
+    <PackageTags>$(PackageTags) Bus</PackageTags>
+  </PropertyGroup>
+
+</Project>

@@ -1,14 +1,15 @@
 ﻿using Azure.Identity;
 using Azure.Messaging.ServiceBus;
-using Bridge.Bus;
+using Bridge;
 using Bridge.Bus.AzureServiceBus;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static partial class ServiceCollectionExtensions
 {
-    public static BusBridgeBuilder UsingAzureServiceBus(
+    public static void UsingAzureServiceBus(
         this BusBridgeBuilder builder,
         Action<AzureServiceBusOptions>? configureOptions = default,
         Action<ServiceBusClientOptions>? configureClient = default)
@@ -21,10 +22,10 @@ public static partial class ServiceCollectionExtensions
         AzureServiceBusOptions options = new AzureServiceBusOptions();
         configureOptions?.Invoke(options);
 
-        foreach (ConsumerConfiguration consumerConfiguration in builder.Consumers)
+        foreach (var consumer in builder.Consumers)
         {
             builder.Services.AddHostedService(sp =>
-                new AzureServiceBusProcessor(sp, consumerConfiguration));
+                new AzureServiceBusProcessor(sp, consumer.Create(sp)));
         }
 
         builder.Services.AddAzureClients(azureClientFactoryBuilder =>
@@ -44,15 +45,17 @@ public static partial class ServiceCollectionExtensions
                 azureClientFactoryBuilder.UseCredential(new ManagedIdentityCredential());
             }
 
-            foreach (ConsumerConfiguration consumerConfiguration in builder.Consumers)
+            foreach (var consumer in builder.Consumers)
             {
                 azureClientFactoryBuilder
-                    .AddClient<ServiceBusProcessor, ServiceBusClientOptions>((_, _, provider) =>
+                    .AddClient<ServiceBusProcessor, ServiceBusClientOptions>((_, _, sp) =>
                     {
-                        ServiceBusClient serviceBusClient = provider.GetRequiredService<ServiceBusClient>();
+                        ServiceBusClient serviceBusClient = sp.GetRequiredService<ServiceBusClient>();
+
+                        var consumerConfiguration = consumer.Create(sp);
 
                         return serviceBusClient.CreateProcessor(
-                            consumerConfiguration.QueueName,
+                            consumer.QueueName,
                             new ServiceBusProcessorOptions
                             {
                                 ReceiveMode = ServiceBusReceiveMode.PeekLock,
@@ -60,13 +63,13 @@ public static partial class ServiceCollectionExtensions
                                 MaxAutoLockRenewalDuration = consumerConfiguration.MaxProcessingTime
                             });
                     })
-                    .WithName(consumerConfiguration.QueueName);
+                    .WithName(consumer.QueueName);
             }
         });
 
-        builder.Services.AddSingleton<IMessageBus, AzureServiceBusSender>();
-
-        return builder;
+        builder.Services.AddSingleton<IBrokerMessageBus, AzureServiceBusSender>();
+        builder.Services.TryAddSingleton<IMessageBus>(sp => 
+            sp.GetRequiredService<IBrokerMessageBus>());
     }
 
     private static void ConfigureServiceBusClientOptions(

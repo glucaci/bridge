@@ -1,4 +1,4 @@
-using Bridge.Bus;
+using Bridge;
 
 namespace Bridge.Sample;
 
@@ -18,12 +18,13 @@ public class Startup
         BridgeOptions options = _configuration.GetSection("Bridge").Get<BridgeOptions>()!;
 
         services
-            .AddBridgeBus()
+            .AddBridge()
             .AddConsumer<DocumentCreatedHandler, DocumentCreated>(options.QueueName)
-            .UsingAzureServiceBus(o =>
+            .AddOutbox(o =>
             {
-                o.ConnectionString = options.BusConnectionString;
-            });
+                o.UsingInMemory();
+            })
+            .UsingInMemory();
     }
 
     public void Configure(IApplicationBuilder app)
@@ -32,6 +33,14 @@ public class Startup
         app.UseEndpoints(builder =>
         {
             builder.MapGet("/", () => DateTimeOffset.Now);
+            builder.MapGet("/send", // GET: Only for demo purpose :)
+                async (IMessageBus messageBus, CancellationToken cancellationToken) =>
+                {
+                    await messageBus.Send(
+                        new DocumentProcessed(Guid.NewGuid().ToString("N")),
+                        "sample-queue",
+                        cancellationToken);
+                });
         });
     }
 }
@@ -39,6 +48,7 @@ public class Startup
 public record BridgeOptions(string BusConnectionString, string QueueName);
 
 public record DocumentCreated(string Id);
+public record DocumentProcessed(string Id);
 
 public class DocumentCreatedHandler : IConsumer<DocumentCreated>
 {

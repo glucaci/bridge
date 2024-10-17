@@ -1,0 +1,17 @@
+﻿#nullable enable
+Bridge.BusBridgeBuilder
+Bridge.BusBridgeBuilder.AddConsumer<TConsumer, TMessage>(string! queueName, System.Action<Bridge.ConsumerConfiguration!>? configure = null) -> Bridge.BusBridgeBuilder!
+Bridge.BusBridgeBuilder.AddOutbox(System.Action<Bridge.BusBridgeOutboxBuilder!>! configure) -> Bridge.BusBridgeBuilder!
+Bridge.BusBridgeBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Bridge.BusBridgeOutboxBuilder
+Bridge.BusBridgeOutboxBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Bridge.ConsumerConfiguration
+Bridge.ConsumerConfiguration.MaxProcessingTime.get -> System.TimeSpan
+Bridge.ConsumerConfiguration.MaxProcessingTime.set -> void
+Bridge.IConsumer<TMessage>
+Bridge.IConsumer<TMessage>.Handle(TMessage message, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+Bridge.IMessageBus
+Bridge.IMessageBus.Schedule<TMessage>(TMessage message, string! queue, System.DateTimeOffset enqueueTime, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+Bridge.IMessageBus.Send<TMessage>(TMessage message, string! queue, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions
+static Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddBridge(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Bridge.BusBridgeBuilder!

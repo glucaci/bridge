@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Bus\src\AzureServiceBus\AzureServiceBus.csproj" />
+	  <ProjectReference Include="..\..\Core\src\InMemory\InMemory.csproj" />
 	</ItemGroup>
 
 </Project>
