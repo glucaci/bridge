@@ -1,4 +1,4 @@
-﻿using Azure.Messaging;
+﻿using CloudNative.CloudEvents;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bridge.Bus;
@@ -33,20 +33,17 @@ public class ConsumerConfiguration
         MessageType = messageType;
         HandleMessage = handleMessage;
     }
-
-    private static T Convert<T>(CloudEvent cloudEvent)
-    {
-        return cloudEvent.Data!.ToObjectFromJson<T>();
-    }
-
-    internal static ConsumerConfiguration Create<TConsumer, TMessage>(string queueName)
+    
+    internal static ConsumerConfiguration Create<TConsumer, TMessage>(
+        string queueName,
+        ISerializer serializer)
         where TConsumer : IConsumer<TMessage>
     {
         HandleMessageDelegate handleMessage =
             async (serviceProvider, cloudEvent, cancellationToken) =>
             {
                 TConsumer handler = serviceProvider.GetRequiredService<TConsumer>();
-                TMessage message = Convert<TMessage>(cloudEvent);
+                TMessage message = serializer.Convert<TMessage>(cloudEvent);
                 await handler.Handle(message, cancellationToken);
             };
 

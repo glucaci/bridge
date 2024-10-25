@@ -39,10 +39,12 @@ public class InMemoryBusHost<TConsumer, TMessage>
 
         var services = new ServiceCollection();
 
+        services.AddSingleton<TimeProvider>(timeProvider);
+
         services
             .AddBridgeBus()
             .AddConsumer<TConsumer, TMessage>(queueName)
-            .UsingInMemory(timeProvider);
+            .UsingInMemory();
         
         var serviceProvider = services.BuildServiceProvider();
         

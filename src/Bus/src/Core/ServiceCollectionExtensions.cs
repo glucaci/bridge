@@ -7,6 +7,8 @@ public static class ServiceCollectionExtensions
     public static BusBridgeBuilder AddBridgeBus(
         this IServiceCollection services)
     {
+        services.AddSingleton<ISerializer, DefaultSerializer>();
+        
         return new BusBridgeBuilder(services);
     }
 }

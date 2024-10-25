@@ -1,9 +1,11 @@
-﻿using Azure.Messaging;
-using Azure.Messaging.ServiceBus;
+﻿using Azure.Messaging.ServiceBus;
+using CloudNative.CloudEvents;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using AzureCloudEvent = Azure.Messaging.CloudEvent;
+using NativeCloudEvent = CloudNative.CloudEvents.CloudEvent;
 
 namespace Bridge.Bus.AzureServiceBus;
 
@@ -40,14 +42,33 @@ internal class AzureServiceBusProcessor : IHostedService
 
     private async Task HandleMessage(ProcessMessageEventArgs arg)
     {
-        CloudEvent? cloudEvent = CloudEvent.Parse(arg.Message.Body);
-        if (cloudEvent == null)
+        AzureCloudEvent? azureCloudEvent = AzureCloudEvent.Parse(arg.Message.Body);
+        if (azureCloudEvent == null)
         {
             await arg.DeadLetterMessageAsync(arg.Message);
         }
         else
         {
-            await _consumerConfiguration.HandleMessage(_serviceProvider, cloudEvent, arg.CancellationToken);
+            var cloudNativeEvent = new NativeCloudEvent(CloudEventsSpecVersion.V1_0)
+            {
+                Id = azureCloudEvent.Id,
+                Source = new Uri(azureCloudEvent.Source, UriKind.RelativeOrAbsolute),
+                Type = azureCloudEvent.Type,
+                Time = azureCloudEvent.Time,
+                DataContentType = azureCloudEvent.DataContentType,
+                DataSchema = azureCloudEvent.DataSchema != null ? 
+                    new Uri(azureCloudEvent.DataSchema, UriKind.RelativeOrAbsolute) : 
+                    null,
+                Subject = azureCloudEvent.Subject,
+                Data = azureCloudEvent.Data
+            };
+
+            foreach (var attribute in azureCloudEvent.ExtensionAttributes)
+            {
+                cloudNativeEvent[attribute.Key] = attribute.Value;
+            }
+            
+            await _consumerConfiguration.HandleMessage(_serviceProvider, cloudNativeEvent, arg.CancellationToken);
             await arg.CompleteMessageAsync(arg.Message);
         }
     }

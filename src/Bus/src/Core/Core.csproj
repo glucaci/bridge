@@ -9,12 +9,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CloudNative.CloudEvents" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Azure.Messaging.ServiceBus" />
 	</ItemGroup>
 
 </Project>

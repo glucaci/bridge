@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using System.Net;
 using System.Threading.Channels;
-using Azure.Messaging;
+using CloudNative.CloudEvents;
 
 namespace Bridge.Bus.InMemory;
 
@@ -45,9 +46,16 @@ internal class InMemoryMessageBus : IInMemoryMessageBus
         {
             enqueueTime = scheduledEnqueueTime.Value;
         }
-
-        CloudEvent cloudEvent = new CloudEvent(
-            nameof(InMemoryMessageBus), typeof(TMessage).Name, message);
+        
+        var cloudEvent = new CloudEvent
+        {
+            Id = Guid.NewGuid().ToString(),
+            Source = new Uri("/localhost"),
+            Type = typeof(TMessage).Name,
+            Data = message,
+            DataContentType = "application/json",
+            Time = DateTimeOffset.Now
+        };
 
         var inMemoryMessage = new InMemoryMessage(enqueueTime, cloudEvent);
 
